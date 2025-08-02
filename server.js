@@ -6,6 +6,8 @@ const campaignsRoutes = require('./routes/campaigns');
 
 const app = express();
 
+app.use(express.static('public'));
+
 app.use(cors({
   origin: ['http://127.0.0.1:5500', 'https://influencerconnect.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
