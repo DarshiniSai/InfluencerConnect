@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 const bcrypt = require("bcrypt");
-const sendOTP = require("../js/emailService"); 
+const sendOTP = require("../public/js/emailService"); 
 require('dotenv').config();
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
@@ -25,54 +25,41 @@ router.post("/", async (req, res) => {
     audience,
     platforms,
   } = req.body;
+
   try {
+    // Check if email already exists
+    const [existingUser] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (existingUser.length > 0) {
+      return res.status(409).json({ error: "Email already registered" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
-    const sql = `
-    INSERT INTO users (role, name, brandName, email, password, website, segment, audience)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
 
-    db.query(
-      sql,
-      [
-        role,
-        name,
-        brandName,
-        email,
-        hashedPassword,
-        website,
-        segment,
-        audience,
-      ],
-      (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        const userId = result.insertId;
-        if (role === "influencer" && platforms) {
-          const platformEntries = Object.entries(platforms).map(
-            ([platform, info]) => [
-              userId,
-              platform,
-              info.handle,
-              info.followers,
-            ]
-          );
-
-          db.query(
-            "INSERT INTO platforms (user_id, platform, handle, followers) VALUES ?",
-            [platformEntries],
-            (err2) => {
-              if (err2) return res.status(500).json({ error: err2.message });
-              return res.json({ message: "User registered with platforms" });
-            }
-          );
-        } else {
-          res.json({ message: "User registered" });
-        }
-      }
+    const [result] = await db.query(
+      `INSERT INTO users (role, name, brandName, email, password, website, segment, audience)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [role, name, brandName, email, hashedPassword, website, segment, audience]
     );
+
+    const userId = result.insertId;
+
+    if (role === "influencer" && platforms) {
+      const platformEntries = Object.entries(platforms).map(
+        ([platform, info]) => [userId, platform, info.handle, info.followers]
+      );
+
+      await db.query(
+        "INSERT INTO platforms (user_id, platform, handle, followers) VALUES ?",
+        [platformEntries]
+      );
+
+      return res.status(201).json({ message: "User registered with platforms" });
+    } else {
+      return res.status(201).json({ message: "User registered" });
+    }
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong during signup" });
+    console.error("Signup error:", error);
+    return res.status(500).json({ error: "Something went wrong during signup" });
   }
 });
 
