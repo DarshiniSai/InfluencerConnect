@@ -7,13 +7,20 @@ const campaignsRoutes = require('./routes/campaigns');
 const app = express();
 
 app.use(cors({
-  origin: [
-    'http://127.0.0.1:5500',
-    'https://influencerconnect.vercel.app',
-    'https://influencer-connect-frontend.vercel.app',
-    'https://influencerconnect-frontend.onrender.com',
-    'https://influencer-connect-frontend-4yhn5ztzc.vercel.app'
-  ],
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      'http://127.0.0.1:5500',
+      'https://influencerconnect.vercel.app',
+      'https://influencer-connect-frontend.vercel.app',
+      'https://influencer-connect-frontend.onrender.com',
+      'https://influencer-connect-frontend-4yhn5ztzc.vercel.app'
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
