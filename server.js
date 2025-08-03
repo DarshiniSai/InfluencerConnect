@@ -18,6 +18,9 @@ app.use(bodyParser.json());
 app.use('/users', userRoutes);
 app.use('/campaigns', campaignsRoutes);
 app.use(express.static('public'));
+app.get('/', (req, res) => {
+  res.send('Backend is working');
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
