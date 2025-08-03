@@ -11,7 +11,8 @@ app.use(cors({
     'http://127.0.0.1:5500',
     'https://influencerconnect.vercel.app',
     'https://influencer-connect-frontend.vercel.app',
-    'https://influencerconnect-frontend.onrender.com'
+    'https://influencerconnect-frontend.onrender.com',
+    'https://influencer-connect-frontend-4yhn5ztzc.vercel.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
