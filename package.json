@@ -2,7 +2,7 @@
   "name": "hackathon-smip",
   "version": "1.0.0",
   "description": "This is a simple web app that helps brands and influencers connect.",
-  "main": "db.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
