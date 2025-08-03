@@ -5,7 +5,7 @@ const userRoutes = require('./routes/users');
 const campaignsRoutes = require('./routes/campaigns');
 
 const app = express();
-
+console.log("in server.js");
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
