@@ -6,19 +6,18 @@ const campaignsRoutes = require('./routes/campaigns');
 
 const app = express();
 
-app.use(express.static('public'));
-
 app.use(cors({
   origin: [
-  'http://127.0.0.1:5500',
-  'https://influencerconnect.vercel.app',
-  'https://influencer-connect-frontend.vercel.app',
-  'https://influencerconnect-frontend.onrender.com'
-],
+    'http://127.0.0.1:5500',
+    'https://influencerconnect.vercel.app',
+    'https://influencer-connect-frontend.vercel.app',
+    'https://influencerconnect-frontend.onrender.com'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
 
+app.use(express.static('public'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(bodyParser.json());
