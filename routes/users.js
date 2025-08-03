@@ -64,6 +64,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
+  console.log('GET /users HIT');
   const { email, password } = req.query;
   try {
     const [results] = await db.query("SELECT * FROM users WHERE email = ? LIMIT 1", [email]);
