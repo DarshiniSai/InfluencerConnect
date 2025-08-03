@@ -87,7 +87,6 @@ router.get("/", async (req, res) => {
 
 const otpMap = {}; 
 
-
 router.post("/forgot-password", async (req, res) => {
   console.log("POST /forgot-password hit");
   const { email } = req.body;
@@ -178,6 +177,29 @@ router.get("/influencers/all", async (req, res) => {
     });
 
     res.json(Object.values(influencersMap));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const [results] = await db.query("SELECT * FROM users WHERE email = ? LIMIT 1", [email]);
+
+    if (results.length === 0) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const user = results[0];
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    res.json({ message: "Login successful", email: user.email, role: user.role });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
